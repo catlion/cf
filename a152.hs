@@ -5,19 +5,19 @@ import Data.Char
 
 poss :: [Int] -> [Int]
 poss [] = []
-poss lst = elemIndices max lst
-  where max = head . map $ maximum lst
+poss lst = elemIndices mx lst
+  where mx = maximum lst
+
+toints :: [String] -> [[Int]]
+toints = map . map $ digitToInt
 
 calc :: [String] -> Int
-calc strs =
-  let ints = [ map digitToInt str | str <- strs]
-      maxposs = map poss ints in
-  map (length . nub . (++)) maxposs
-  
+calc = length . nub . foldl1 (++) . map poss . transpose . toints
+
 main = do
   nm <- fmap words getLine
   let nmi = map (\x -> read x :: Int) nm
       n = nmi !! 0
       --m = nmi !! 1
   slist <- replicateM n getLine
-  mapM print . show . calc $ slist
+  print $ calc slist
