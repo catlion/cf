@@ -1,1 +1,0 @@
-ocamlopt nums.cmxa str.cmxa %1

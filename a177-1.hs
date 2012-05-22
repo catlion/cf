@@ -53,8 +53,8 @@ import Data.List
 import Control.Monad
 
 poss :: Int -> [(Int, Int)]
-poss n = [ (x,y) | x <- [1 .. n], y <- [1 .. n], x==y || n-x==y || x==mid' n || y==mid' n]
-  where mid' a = (a `div` 2) + 1
+poss n = [ (x,y) | x <- [0 .. n-1], y <- [0 .. n-1], x==y || (x+y)==(n-1) || x+1==mid' || y+1==mid']
+  where mid' = (n `div` 2) + 1
 
 positions :: Int -> [Int]
 positions n = map flattered (poss n)
