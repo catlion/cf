@@ -1,4 +1,10 @@
 import Control.Monad
+import qualified Data.Sequence as Seq
+
+mkGraph :: Int -> [(Int,Int)] -> Sequence
+mkGraph n pairs =
+	let lists = Seq.fromList $ map Seq.singleton [1 .. n] in
+	
 
 maxparty :: Int -> Int -> Int -> [(Int,Int)] -> [(Int,Int)] -> Int
 maxparty known fc ec friends emenies =
