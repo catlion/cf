@@ -13,13 +13,14 @@ solve lesha archive =
     where l = words lesha
 
 invcount src tgt =
-    fst $ foldl cmp (0,1) tgti
-    where srci = M.fromList $ zip src [1..]
-          tgti = Data.List.map (\x -> (x, M.lookup x)) srci
-          cmp _ (_,Nothing) = fail "Fuuuuu"
-          cmp (str, sidx) (cnt, Just idx) =
-            if idx < sidx then (cnt+1, idx+1)
-            else (cnt, idx+1)
+    fst $ foldl cmp 0 tgti
+    where srci = M.fromList $ zip src [ 1.. ]
+          tgti = M.fromList $ zip tgt [ 1.. ]
+          cmp acc str =
+            if idx < sidx then acc+1
+            else acc
+	    where idx  = tgti M.! str
+		  sidx = srci M.! str
 
 similarity :: [String] -> [String] -> (Maybe Int, Int)
 similarity lesha arch =
