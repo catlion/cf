@@ -7,34 +7,36 @@ formatsol (Nothing, _) = "Brand new problem!"
 formatsol (Just simil, idx) =
     show idx ++ "\n[:" ++ (replicate simil '|') ++ ":]"
 
-solve :: String -> [String]
+solve :: String -> [String] -> String
 solve lesha archive =
     formatsol $ similarity l archive
     where l = words lesha
 
 invcount src tgt =
-    foldl cmp 0 tgti
+    fst $ foldl cmp (0,1) tgti
     where srci = M.fromList $ zip src [1..]
-          tgti = foldl 
-          cmp x acc = 
-
+          tgti = Data.List.map (\x -> (x, M.lookup x)) srci
+          cmp _ (_,Nothing) = fail "Fuuuuu"
+          cmp (str, sidx) (cnt, Just idx) =
+            if idx < sidx then (cnt+1, idx+1)
+            else (cnt, idx+1)
 
 similarity :: [String] -> [String] -> (Maybe Int, Int)
 similarity lesha arch =
-    let afixed = map (drop 1 . words) arch in
-    let lperm = permutations lesha in
     foldl chk (Nothing, 1) afixed
-    where chk atask (x, c) =
-        if atask `elem` lperm then
-            case x of Nothing -> (Maybe s, c + 1)
-                      Maybe os -> if s > os then (Maybe s, c + 1)
-                                  else (x, c + 1)
-            where s = n * (n-1) / 2 - inv + 1
-                  n = length lesha
-                  inv = invcount atask lesha
-        else (x, c + 1)
+    where afixed = map (drop 1 . words) arch
+          chk atask (x, c) =
+            if atask `elem` lperm then
+                let n = length lesha
+                    s = n * (n-1) / 2 - inv + 1
+                    inv = invcount atask lesha in
+                case x of Nothing -> (Just s, c + 1)
+                          Just os -> if s > os then (Just s, c + 1)
+                                     else (x, c + 1)
+            else (x, c + 1)
+          lperm = permutations lesha
 
-getInt = \x -> read x :: Int
+getInt x = read x :: Int
 
 main = do
     leshawcount <- getLine
