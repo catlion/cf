@@ -1,6 +1,7 @@
 import Control.Monad
 import Data.List
 import qualified Data.Map as M
+import Debug.Trace
 
 formatsol :: (Maybe Int, Int) -> String
 formatsol (Nothing, _) = "Brand new problem!"
@@ -12,24 +13,24 @@ solve lesha archive =
     formatsol $ similarity l archive
     where l = words lesha
 
+invcount :: [String] -> [String] -> Int
 invcount src tgt =
-    fst $ foldl cmp 0 tgti
+    M.foldlWithKey cmp 0 tgti
     where srci = M.fromList $ zip src [ 1.. ]
           tgti = M.fromList $ zip tgt [ 1.. ]
-          cmp acc str =
-            if idx < sidx then acc+1
+          cmp acc str i =
+            if i < (srci M.! str) then acc+1
             else acc
-	    where idx  = tgti M.! str
-		  sidx = srci M.! str
 
 similarity :: [String] -> [String] -> (Maybe Int, Int)
 similarity lesha arch =
     foldl chk (Nothing, 1) afixed
     where afixed = map (drop 1 . words) arch
-          chk atask (x, c) =
+          --chk _ atask | trace (head atask) False = undefined
+          chk (x, c) atask =
             if atask `elem` lperm then
                 let n = length lesha
-                    s = n * (n-1) / 2 - inv + 1
+                    s = n * (n-1) `div` 2 - inv + 1
                     inv = invcount atask lesha in
                 case x of Nothing -> (Just s, c + 1)
                           Just os -> if s > os then (Just s, c + 1)
